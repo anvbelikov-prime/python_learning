@@ -697,6 +697,11 @@ df['ts_column'].dt.is_month_end
 df['ts_column'].dt.is_quarter_start
 df['ts_column'].dt.is_quarter_end
 
+## Группировка в случае datetime индекса
+
+df.resample('QE')[col_name].mean()
+df.resample('1D')['col_name].sum()
+
 ## Интервалы времени
 
 ### Статические смещения
