@@ -1,0 +1,743 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+## Series
+
+### Конструктор и типы значений
+
+s = pd.Series(
+    data,
+    index,
+    dtype
+)
+
+np.nan
+
+s.astype(np.int8) # конвертация в нужный тип
+
+### Атрибуты
+
+s.values
+s.index
+
+s.size
+s.shape
+s.dtype
+s.is_unique
+s.is_monotonic_increasing
+s.is_monotonic_decreasing
+
+
+### Первые и последние строки
+
+s.head()
+s.tail()
+
+s.head(n)
+s.tail(n)
+
+### Математические и статистические методы
+
+s.sum(
+    skipna,    # игнорировать ли np.nan
+    min_count  # минимальное кол-во имеющихся НЕ np.nan значений
+)
+
+s.count() # подсчет непустых значений
+s.sum()
+s.product()
+s.max()
+s.min()
+s.mean()
+s.median()
+s.std()
+s.cumsum()  # куммулятивная сумма
+
+s.ffill()
+s.bfill()
+
+s.ffill().pct_change()
+
+s.dropna()
+s.fillna(fill_expression)
+
+s.sample(n) # семплирование размера n исходного массива
+
+s.unique()
+s.nunique() # np.nan не входит в подсчет
+
+s.diff(
+    periods  # вывести разницу текущим элементов и periods-отстоящим (1 - назадб -1 - вперед)
+)
+
+### Импорт из csv (в Series, а не в DataFrame)
+
+ser = pd.read_csv(
+    'file.csv',
+    usecols=['..', '..', '...'],
+    parse_dates=['..', '..', '...'],
+    index_col=['..', '..', '...'],                  # может быть список чисел - порядковых номеров столбцов
+    header=[0, 1],                                  # может быть список чисел - порядковых номеров строк в случае столбцового мультииндекса
+    dtype={'col_name_1':type1, 'col_name_2':type2}, # для явного указания типа выбранных колонок
+    skip_blank_lines,                               # = True для игнорирования пустых строк
+    sep,                                            # задаем разделитель
+    names=['..', '..', '...'],                      # передаем руками имена столбцов
+    comment,                                        # символ комменатрия, начиная с которого строка будет игнорироваться
+).squeeze(axis=1)
+
+### Сортировка Series
+
+s.sort_values(
+    ascending,     # =False
+    na_position,   # 'first', 'last'
+    key
+)
+
+s.sort_index(
+    ascending,     # =False
+    na_position,   # 'first', 'last'
+    key
+)
+
+### n-бОльших/меньших значений
+
+s.nlargest(
+    n,
+    keep      # {'first', 'last', 'all'}
+)
+
+s.nsmallest(
+    n,
+    keep      # {'first', 'last', 'all'}
+)
+
+s.idxmax()
+s.idxmin()
+
+### Статистика по встречаемости значений
+
+s.value_counts(
+    ascending,   # по умолчанию False
+    normalize,   # для нормализации (процентное соотношение от общего)
+    bins,        # либо число (для авторазбивки на данное число корзин), либо список из границ корзин (например, [0, 200, 400, 600, 800, 1000])
+    sort         # =False чтобы не сортировать по значениям, а сортировать по корзинам
+)
+
+pd.cut(
+    iterbale,       # array or pd.Series
+    bins,           # int or list of ints
+    include_lowest, # =True включить самое минимальное значение
+    right,          # =True включать правые границы интервалов или нет
+    labels,         # список названий корзин
+)
+
+### Преобразование значений
+
+s.apply(func)
+
+### Наполнение Series рандомными данными
+
+g = np.random.default_rng(seed)
+
+g.integers(
+    low,  # inclusive
+    high, # exclusive
+    size  # int or tuple of ints with num_dimensions
+)
+
+g.normal(
+    mean,  # среднее
+    std,   # отклонение
+    size   # int or tuple of ints with num_dimensions
+)
+
+np.random.randint(
+    low,   # inclusive
+    high,  # exclusive
+    shape  # int or tuple of ints with num_dimensions
+)
+
+np.random.rand(    # generate floats between 0.0 and 1.0
+    shape  # int or tuple of ints with num_dimensions
+)
+
+## DataFrame
+
+### Конструктор DataFrame
+
+df = pd.DataFrame(
+    data,
+    index,
+    columns
+)
+
+### Атрибуты DataFrame и статистические методы
+
+df.index
+df.columns
+df.dtypes
+
+df.ndim # обычно 2 - DataFrame - двумерная структура
+
+df.shape
+df.size
+
+df.count()   # кол-во непустых значений по столбцам: общее кол-во пустых значений - df.size - df.count().sum()
+
+df.head()
+df.tail()
+df.sample()
+
+df.nunique()  # кол-во уникальных значений
+df.max()
+df.min()
+
+df.nlargest(
+    n,
+    columns=['...', '...', '...'],
+    keep
+)
+
+df.nsmallest(
+    n,
+    columns,
+    keep
+)
+
+df.sum(
+    numeric_only    # =True для отсекания нечисловых столбцов
+)
+
+df.mean(
+    numeric_only
+)
+
+df.std(
+    numeric_only
+)
+
+df.median(
+    numeric_only
+)
+
+df.mode(
+    numeric_only
+)
+
+### Сортировка DataFrame
+
+#### Сортировка по столбцу/столбцам
+
+df.sort_values(
+    by=['..', '..', '..'],
+    ascending=[True, False, True],
+    na_position,
+    key
+)
+
+#### Сортировка по индексу
+
+df.sort_index(
+    axis,        # 0 - строки, 1 - столбцы, либо же 'index' и 'columns'
+    ascending,
+    na_position,
+    key
+)
+
+### Задание нового индекса
+
+df.set_index(
+    keys=['..', '..', '..']
+).sort_index(
+    axis=0,
+    level=['..', '..', '..'],
+    ascending=[True/False, True/False, True/False],
+    key
+)
+
+df.reset_index() # убрать столбец из индекса и вернуть обычным столбцом в DataFrame
+
+### Извлечение столбцов DataFrame
+
+df['Column Name']  # возвращает Series
+
+df[['Column Name 1', 'Columns Name 2', '..', '..', ...]]   # извлечение группы столбцов
+
+df.select_dtypes(
+    include,  # взаимоисключающие параметры
+    exclude   # должен быть заполнен хотя бы один
+)
+
+### Извлечение строк DataFrame
+
+#### По меткам индекса
+
+-- одно значение, список из нескольких значений, срез (начало:конец, конец включается)
+
+df.loc['label']
+df.loc[['label1', 'label2', '..']]
+df.loc['label1':'label2']  # верхняя граница включается в диапазон
+df.loc[:'label']
+df.loc['label':]
+
+#### По позиции индекса
+
+-- одно число, список из нескольких чисел, срез (напомианет Pythonячий)
+
+df.iloc[300]
+df.iloc[[10, 45, 50, 80, 99]]
+df.iloc[400:404]  # верхняя граница НЕ включается в диапазон (как в срезах в Python)
+df.iloc[:500]
+df.iloc[10:]
+df.iloc[0:10:2]
+df.iloc[-10:-6]
+
+#### Комбинация с фильтром на столбцы
+
+df.loc[param1, param2]   # param1 - выражение по меткам индекса строк, выражение по меткам индекса столбцов
+df.iloc[param1, param2]  # param1 - выражение по позиции индекса строк, выражение по позиции индекса столбцов
+
+df.at['row_label', 'column_label']  # получение отдельного значения по двум индексам (позициям)
+df.iat[169, 2]                      # работает в целом быстрее, чем тоже самое с loc и iloc
+
+
+### Переименование столбцов и строк
+
+#### Костыльный способ для столбцов
+
+df.columns = ['..', '..', '..', ...]  # присваиваем полный список со значениями, среди которых есть новые
+
+#### Нормальный способ
+
+df.rename(
+    columns={
+        'old_column_name1':'new_column_name1',
+        ...
+    },
+    index={
+        'old_row_name1':'new_row_name1',
+        ...
+    }
+)
+
+### Удаление строк или столбцов
+
+df.drop(
+    labels,
+    axis
+)
+
+### Замена индекса
+
+df.reset_index().set_index(keys=...)  # перед новым set_index нужно обязательно сделать reset_index(), иначе старый индекс потеряется полностью
+
+### Вывод общей информации о DataFrame
+
+df.info()    # в особенности memory_usage
+
+### Смена типа столбца
+
+df['column_name'] = df['column_name'].astype(new_type)   # new_type, например, может быть bool, np.bool, np.int64, np.float16
+
+pd.to_numeric(
+    df['column_name'], # преобразуемая колонка (пытается преобразовать в int, затем во float)
+    errors='coerce'    # если будут ошибки не бросать исключение, а заполнять np.nan
+)
+
+### Специальный тип столбца - категория
+
+df['column_name'] = df['column_name'].astype('category')   # для столбцов, имеющих малое кол-во уникальных категориальных значений
+
+### Фильтрация DataFrame
+
+#### Получение булевых Series
+
+df['column_name'] == expr (!=, <, <=, >, =>)
+
+df['column_name'].isin(exprt_list)
+
+df['column_name'].between(
+    left,       # левая граница
+    righ,       # правая граница
+    inclusive   # both, neither, left, right - варианты включения/исключения границ
+)
+
+df['column_name'].isnull()
+df['column_name'].notnull()
+
+#### Фильтрация DataFrame с помощью булевых Series
+
+df[ condition ]   # condition - булева Series, например, df['First Name'] == 'Maria' даст булеву Series с True в тех местах, где значение == 'Maria'
+
+df[condition1 & condition2]
+df[condition1 | condition2]
+df[~condition1]
+
+### Удаление записей с np.nan
+
+df.dropna(
+    how,    # Варианты: 'all' (строки, где все поля np.nan), 'any' (строки, где хотя бы одно поле np.nan)
+    thresh, # не сочетается с how, задает порог - минимальное кол-во непустых значений
+    subset=['..', '..', '..']  # смотреть на np.nan только в переданном подмножестве столбцов
+)
+
+### Дублирующие значения в столбце
+
+df['column_name'].duplicated(
+    keep   # 'first' или 'last'  # промаркирует в False первое или последнее встреченное уникальное значение, True - у дубликатов
+)
+
+df.drop_duplicates(
+    subset=['..', '..', '..', ..],  # ограничиваем подмножество, по которому проверяем дубликаты
+    keep   # 'first' или 'last' - оставляем первую или последнюю строку при совпадении значений из столбцов в subset, а также False - убрать все дублирующиеся
+)
+
+### Интерполяция для заполнения np.nan
+
+df.interpolate(
+    method   # 'linear', 'nearest'
+)
+
+### Вычисление новой колонки по значениям других колонок
+
+def my_func(a, b, ...):
+    ...
+    return ...
+
+df['new_column'] = df.apply(lambda row: my_func(row['column1'], row['column2'], ...), axis=1)
+
+## Строковые методы pandas (str,  StringMethods)
+
+s = pd.Series()
+s.dtype == 'object' # по сути строки (strings, str)
+
+s.str.method_name   # доступ до методов str
+
+s.str.strip()
+s.str.lower()
+s.str.capitalize()
+s.str.title()
+
+s.str.replace(
+    to_replace,
+    value
+)
+
+s.replace(       # есть вариант без str
+    to_replace,
+    value
+)
+
+df.replace(     # есть вариант без str
+    to_replace,
+    value
+)
+
+s.str[3:7]        # можно использовать срезы строк
+s.str.slice(3, 7) # можно в более явном виде
+
+s.str.contains('str to find')
+s.str.startswith('str to find')
+s.str.endswith('str to find')
+
+s.str.len()
+
+s.str.split(
+    pat,     # шаблон разделителя
+    n,       # кол-во разбиений (если n == 1, то элементов будет 2)
+    expand   # если указано как True, то каждый элемент разбиения будет в отдельном столбце, а на выходе будет DataFrame
+)
+
+s.str.get(
+   i         # достать i-ый элемент из списка, например, s.str.split(pat='-').str.get(0) - получить 1ый элемент после разбиения строки по дефису
+) 
+
+## Мультииндекс
+
+### Конструктор
+
+new_index = pd.MultiIndex.from_tuples(
+    tuples, # список кортежей с элементами уровней мультииндекса
+    names   # список названий уровней мультииндекса
+)
+
+df = pd.DataFrame(
+    data,
+    index,  # может быть мультииндексом
+    columns # тоже может быть мультииндексом
+)
+
+### Получение названий уровней для строкового и столбцового мультииндексов
+df.index.names
+df.columns.names
+
+### Получение названий уровней для строкового и столбцового мультииндексов
+
+df.index.get_level_values(idx)            # по порядковому номеру уровня
+df.index.get_level_values(level_name)     # по названию уровня
+
+df.columns.get_level_values(idx)            # по порядковому номеру уровня
+df.columns.get_level_values(level_name)     # по названию уровня
+
+### Сортировка мультииндексов
+
+df.sort_index(
+    axis,        # 0 - строки, 1 - столбцы, либо же 'index' и 'columns'
+    level=['..', '..', '..' | 1, 2, 4],  # какие уровни (по умолчанию все) нужно сортировать
+    ascending,                           # в случае нескольких уровней - список из bool
+    na_position,
+    key
+)
+
+### Извление столбца/столбцов мультииндекса
+
+df['upper_level_value']
+df[('upper_level_value', 'sub_level_value')]   # передаем кортеж
+df[[('upper_level_value_1', 'sub_level_value_1'), ('upper_level_value_2', 'sub_level_value_2')]]  # список кортежей
+
+### Извлечение строк
+
+df.loc['upper_level_value']   # все строки, у которых первый уровень мультииндекса == 'upper_level_value'
+df.loc[('upper_level_value', 'sub_level_value')]
+
+df.loc[
+    ('row_upper_level_value', 'row_sub_level_value'),
+    ('column_upper_level_value', 'column_sub_level_value'),
+]
+
+df.loc[
+    ('row_upper_level_value_1', 'row_sub_level_value_1'):('row_upper_level_value_2', 'row_sub_level_value_2'),
+    ('column_upper_level_value_1', 'column_sub_level_value_1'):('column_upper_level_value_2', 'column_sub_level_value_2'),
+]
+
+df.iloc  # все аналогично, тут только порядковые номера строк и столбцов, мультииндекс и его структура iloc НЕ важны
+
+### Поперечные срезы
+
+df.xs(
+    axis,                    # 0, 'index' - строки, 1, 'columns' - столбцы
+    key=(.., .., ..),        # кортеж конкретных значений уровней
+    level=['..', '..', '..'] # названия указанных уровней, либо их порядковые номера
+)
+
+### Преобразование мультииндекса
+#### Смена порядка уровней
+
+df.reoder_levels(
+    axis,   # 0, 'index' - строки, 1, 'columns' - столбцы
+    order   # список названий или индексов уровней в новом порядке
+)
+
+#### Удаление/перемещение уровней
+
+df.reset_index() # перенести весь индекс в DataFrame в качестве столбцов
+
+df.reset_index(
+    level=['..', '..', '..'],  # список уровней
+    drop,                      # удалять ли вообще из DataFrame
+    col_level = '...',         # задать уровень столбцов, на который переносить
+    col_fill = '..'            # чем заполнить пустые значения на других уровнях столбцов
+)
+
+#### Создать мультииндекс
+
+df.set_index(
+    keys=['..', '..', '..']
+)
+
+## Сводные таблицы
+
+df.pivot_table(
+    index=['..', '..', '..'],    # столбцы для строк сводной
+    columns=['..', '..', '..'],  # столбцы для столбцов сводной
+    values=['..', '..', '..'],   # колонки для агшрегирования (значения) сводной
+    aggufunc=['..', '..', '..'] / {'value_column1':'func1', 'value_column2':'func12', ...},  # список или словарь агрегирующих функций
+    fill_value = 0.0,            # чем заполнить np.nan
+    margins=True,                # выводить ли промежуточные итоги
+    margins_name='Total',        # чем заменить название 'All' в итогах
+)
+
+df_pivot_table.stack()    # перевести уровень со столбцов в строки
+df_pivot_table.unstack()  # перенести уровень из строк в столбцы
+
+## Распавление данных (перевод из широкого набора в узкий)
+
+df.melt(
+    id_vars=['..', '..', '..'],    # столбцы-идентификаторы, по которым будет производится агрегация
+    value_vars=['..', '..', '..'], # столбцы со значениями, которые будут "расплавлены" в строки
+    var_name='..',                 # название нового столбца с категориями из value_vars
+    value_name='..',               # название нового столбца со значениями
+)
+
+## Развертывание списка (аналог flatten list by)
+
+df.explode('list_column_name')  # можно передать и список колонок, но длины списков в этих колонках должны совпадать
+
+## Объект GroupBy
+
+gb = df.groupby(
+    by=['..', '..', '..']  # список столбцов в группировке
+)
+
+len(gb)  # кол-во групп в группировке
+
+### Атрибуты и методы GroupBy
+
+gb.size()   # выводит Series с кол-вом записей по разным группам
+
+gb.groups   # словарь 'название_группы':[список индексов записей исходного DataFrame, относящихся к этой группе]
+
+gb.get_group('category_name' | ('category_name_1', 'sub_category_name_1', ...))  # выводит записи с ключом группировки == переданному (значению или кортежу)
+
+gb.mean()  # вывести среднее по всем группам, участвующих в группировке
+
+gb.first()  # вывести первую запись группы (у каждой группы есть свой независимый индекс)
+gb.last()   # вывести последнюю запись группы (у каждой группы есть свой независимый индекс)
+gb.nth(idx) # вывести запись группы с индексом idx (у каждой группы есть свой независимый индекс)
+
+gb.head(n)  # извлекает n первых записей в каждой группе
+gb.tail(n)  # извлекает n последних записей в каждой группе
+
+### Агрегатные функции GroupBy
+
+gb.sum(
+    numeric_only, # =True для отсекания нечисловых столбцов
+    min_count     # минимальное кол-во имеющихся НЕ np.nan значений
+)
+gb.mean(
+    numeric_only, # =True для отсекания нечисловых столбцов
+    min_count     # минимальное кол-во имеющихся НЕ np.nan значений
+)
+gb.max(
+    numeric_only, # =True для отсекания нечисловых столбцов
+    min_count     # минимальное кол-во имеющихся НЕ np.nan значений
+)
+gb.min(
+    numeric_only, # =True для отсекания нечисловых столбцов
+    min_count     # минимальное кол-во имеющихся НЕ np.nan значений
+)
+
+gb['numeric_column_name'].sum()
+
+
+gb.agg(
+    {'col_name_1':'func_name_1', 'col_name_2':'func_name_2'}   # пример {'Revenue':'sum', 'Employees':'max'}
+)
+
+gb.apply(
+    my_func    # функция, умеющая работать с DataFrame
+)
+
+gb.filter(
+    my_func    # функция, умеющая работать с DataFrame
+)
+
+gb.transform(
+    my_func    # функция, умеющая работать с DataFrame
+)
+
+## Конкатенция нескольких DataFrame
+
+pd.concat(
+    objs=[df1, df2, df3, ...],   # список DataFrame
+    ignore_index,                # =True тогда сегенрировать новый сквозной уникальных индекс нового DataFrame, а не конкатенировать существующие индексы
+    axis,                        # 0, 'index' - горизонтальная конкатегация (снизу); 1, 'columns' - вертикальная (справа)
+    keys=['key1', 'key2', ...]   # метки для нового мультииндекса, чтобы разметить источник появления (из какого DataFrame)
+)
+
+## Соединения двух DataFrame
+
+df1.merge(
+    df2,
+    how,                          # 'left', 'right', 'inner', 'outer', 'cross'
+    left_on=['..', '..', ..],     # левый ключ
+    right_on=['..', '..', ..],    # правый ключ
+    on=['..', '..', ..],          # только если названия столбцов совпадают в обоих DataFrame
+    left_index,                   # =True в случае соединения по индексу
+    right_index,                  # =True в случае соединения по индексу
+    indicator,                    # =True - создает столбец _merge со значениями 'both', 'left_only', 'right_only'
+)
+
+## Дата и время
+
+pd.Timestamp(    # аналог datetime.datetime в Python
+    year,
+    month,
+    day,
+    hour=0,
+    minute=0,
+    second=0,
+)
+
+pd.Timestamp(   # можно также передавать строки с форматами времени
+    iso_format_dt_str
+)
+
+pd.DatetimeIndex(  # создание индекса из временных меток
+    iterable,      # iterable элементы которого могут быть сконвертированы в pd.Timestamp: datetime.date/datetime, iso_format_str, pd.Timestamp, ...
+)
+
+df['date_column'] = pd.to_datetime(df['date_column']) # cast Series в тип pd.Timestamp
+
+## Методы даты-времени pandas (datetimeproperties)
+
+df['ts_column'].dt.day
+df['ts_column'].dt.month
+df['ts_column'].dt.year
+
+df['ts_column'].dt.dayofweek  # 0 - пн, 1 - вт, 2 - ср, ..
+df['ts_column'].dt.day_name()
+df['ts_column'].dt.month_name()
+
+df['ts_column'].dt.is_year_start
+df['ts_column'].dt.is_year_end
+df['ts_column'].dt.is_month_start
+df['ts_column'].dt.is_month_end
+df['ts_column'].dt.is_quarter_start
+df['ts_column'].dt.is_quarter_end
+
+## Интервалы времени
+
+### Статические смещения
+
+pd.DateOffset(    # аналог datetime.timedelta в Python, можно вычитать и складывать с pd.Timestamp
+    years,
+    months,
+    days,
+    hours,
+    minutes,
+    seconds,
+)
+
+### Динамические смещения
+
+pd.offsets.MonthBegin()  # смещение всегда должно произойти, поэтому (pd.Timestamp('2025-10-01') + pd.offsets.MonthBegin()) == '2025-11-01' 
+pd.offsets.MonthEnd()    # смещение всегда должно произойти, поэтому (pd.Timestamp('2025-10-31') + pd.offsets.MonthEnd())   == '2025-11-30'
+
+pd.offsets.BMonthBegin() # смещение до рабочего дня 
+pd.offsets.BMonthEnd()   # смещение до рабочего дня 
+
+###  Интервал
+
+pd.Timedelta(
+    days,
+    hours,
+    minutes,
+    seconds,
+)
+
+pd.Timedelta(
+    str          # '3 hours, 25 minutes'
+)
+
+pd.to_timedelta(
+    iterable,
+    unit            # pd.to_timedelta([1, 2, 3], unit='day')
+)
+
+## Оконные функции в расчетах
+
+df.expanding().sum()     # куммулятивное окно
+
+df.rolling(num).mean()   # плавающее окно

@@ -1,0 +1,4 @@
+key,value,type
+a,1,int
+b,2,str
+c,3.5,float
