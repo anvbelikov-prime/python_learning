@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 ## Series
 
@@ -746,3 +747,42 @@ pd.to_timedelta(
 df.expanding().sum()     # куммулятивное окно
 
 df.rolling(num).mean()   # плавающее окно
+
+## Встроенная визуализация Pandas
+
+df.set_index(col_name1).plot.line(
+    x,                # ось x
+    y,                # ось y
+    c,                # признак, по которому будет определяться цвет (например, month или category)
+    colormap,         # цветовая карта для раскраски
+    figsize=(w, h),   # размеры картинки
+)
+
+df.plot.bar()
+df.plot.pie()
+df.plot.scatter()
+df.plot.hist()
+df.plot.box()
+
+df.plot(kind='bar', ...)
+
+df.groupby()[...].plot.line()
+
+## Библиотека Seaborn
+
+sns.relplot(
+    x,           # ось x
+    y,           # ось y
+    data,        # dataframe для визуализации
+    kind,        # тип графика (для rel - это 'line' или 'scatter')
+    hue,         # признак, по которому окрашиваются объекты (например, точки или линии) (может быть, например, month или category)
+    style,       # признак, по которому меняется стиль объекта (например, точки или линии) (может быть, например, month или category)
+    height,      # высота графика (по умолчанию 5) (в дюймах)
+    aspect,      # коэффициент: width = aspect * height
+    row,         # признак разделения отдельных графиков горизонтально (например, каждый месяц на отдельном графике друг под другом)
+    col,         # признак разделения отдельных графиков вертикально (например, год, каждый график рядом друг с другом на одной строке)
+)
+
+sns.catplot()  # визуализация отношений, включающих категориальные столбцы 
+sns.displot()  # визуализация распределений
+sns.regplot()  # визуализация регрессионных моделей
