@@ -238,4 +238,424 @@ range([start=0], end, [step=1])
 Упрощение логических выражений:
 [if score:] эквивалетно [if score > 0:]
 
+-------------- Chapter 5 ----------------
+
+Поддерживаемые типы чисел: int, float, complex
+
+Комплексное число: 3+4J
+
+Для операций повышенной точности для вещественных чисел нужно использовать Decimal:
+import decimal
+decimal.Decimal('0.75')
+
+Для рациональных чисел - модуль fractions:
+import fractions
+a = fractions.Fraction(5, 7)
+a.numerator
+a.denominator
+
+Числовые функции:
+abs
+bin
+oct
+hex
+divmod(a, b)   -> возвращает кортеж (a //b, a % b)
+round
+pow
+max(<iterable>)
+min(<iterable>)
+sum(<iterable>, N)
+
+Округление:
+round(1.24, 1)   # 1.2
+round(1.28, 1)   # 1.3
+
+Форматирование:
+x = 1.234567
+format(x, '0.2f')  # 1.23
+format(x, '{><^}10,.1f)
+
+Математические функции:
+import math
+
+Для комплексных чисел:
+import cmath
+
+math.pi
+math.e
+
+ceil
+floor
+sin
+cos
+tan
+log
+log10
+exp
+sqrt
+
+Случайные числа:
+import random
+
+random.random() - случайное вещественное число от 0 до 1
+random.uniform(a, b) - случайное вещественное число от a до b
+random.randrange(start, end, step)
+random.randint(start, end) - случайное целое число от start до end
+random.choice(<sequence>) - случайный выбор элемента последовательности
+random.sample(<sequence>, n) - выбор n элементов последовательности
+random.shuffle(<sequence>) - перемешать последовательность
+
+Специальные числа:
+float('inf')
+float('-inf')
+float('nan')
+
+math.isinf(a)
+math.isnan(a)
+
+-------------- Chapter 6 ----------------
+
+print('Hello, "world"!')  # сочетание разных типов кавычек
+s = 'Hello'
+s[1]  # e
+s[0] = 'B'   # Error! Строки - неизменяемые объекты
+
+Перечень строковых типов:
+str       - неизменяемый
+bytes     - неизменяемый
+bytearray - изменяемый
+
+s = 'Hello'
+b = s.encode(encoding='utf-8')   # на выходе bytes
+b.decode()                       # на выходе str
+s = str(b, 'utf-8')
+
+Многострочный текст:
+'''Это
+многострочный
+текст
+'''
+
+Экранируемые символы:
+\n
+\t
+\'
+\"
+
+Если перед строкой поставить знак "r", то экранируемые символы будут читаться как есть
+r'\tA\t'   # \tA\t
+
+Индексация:
+s[i]
+s[-i]
+s[:]
+s[start:end:step]
+
+Основные операции со строками:
+s1 + s1
+c in s
+s * 3
+
+Длина строки:
+len(s)
+
+Выравнивание строк:
+s.center(width, symbol=' ')
+s.ljust(width, symbol=' ')
+s.rjust(width, symbol=' ')
+
+Вызов строкового представления объекта:
+str(obj)
+repr(obj)
+ascii(obj)
+
+Методы:
+capitalize()
+count(str, [start], [end])
+endswith(str)      # print([name for name in filenames if name.endswith(('.py', '.c'))]) - можно передавать кортеж из нескольких вариантов
+startswith(str)
+find(str, [start], [end])  # номер вхождения или -1
+index(str, [start], [end]) # номер вхождения или ValueError
+join(<iterable>)
+lower()
+upper()
+islower()
+isupper()
+title()
+istitle()
+strip()
+rstrip()
+lstrip()
+isspace()
+isalpha()
+isalnum()
+isdigit()
+partition(<sep>)   # вернет tuple - до разделителя, разделитель, после разделителя
+split(<sep>)
+replace(<что меняем>, <на что меняем>, limit_num)
+
+Коды символов:
+ord(c)             # symbol_code
+chr(symbol_code)   # c
+
+-------------- Chapter 7 ----------------
+
+Регулярыне выражения:
+import re
+
+re.compile(<регулярное выражение>, <модификаторы>) - скомпилировать шаблон регулярного выражения
+
+^ - привязка к началу строки
+$ - привязка к концу строки
+
+Полезные модификаторы:
+re.M - поиск в многострочной строке
+re.I - игнорировать регистр символов
+re.S - "точка" соответствует любому символу, включая символ перевода строки \n
+
+pattern = re.compile(r'^[a-z]+$', re.I | re.M)
+pattern.search(text_for_searching)    # проверяет совпадение шаблона с любой частью строки, отдает объект Match
+pattern.match(text_for_searching)     # проверяет совпадение шаблона с началом строки, отдает объект Match
+pattern.findall(text_for_searching)   # список найденных совпадения с шаблоном
+
+[13] - цифра 1 или 3
+[abc] - символ a или b или c
+[a-z] - символ из диапазона символов от a до z
+\d - цифра
+\s - пробельный символ (любой)
+\w - эквивалентно [a-zA-z0-9_]
+\D - отрицание от \d
+\W - отрицание от \w
+\S - отрицание от \s
+
+{n} - n вхождений
+{n,} - >= n вхождений
+{n,m} - от n до m вхождений
+* - 0 или больше вхождений
++ - 1 или больше вхождений
+? - ни одного или 1 вхождение
+
+Замена с регулярками:
+def func(m):
+    ... do smth with match object
+
+p = re.compile(r'...')
+p.sub(func, text_for_searching_and_replacement)
+
+Разделить строку с помощью регулярных выражений:
+re.split(r'[;,\s]\s*', line_for_splitting)
+
+Пример применения:
+s = 'Сегодня 9/04/2025. Завтра будет 09/10/2025.'
+p = re.compile(r'(\d{1,2})/(\d{1,2})/(\d{4})')
+print(p.findall(s))
+print(p.sub(r'\3-\1-\2', s))
+
+def date_transform(m):
+    month, day, year = m.groups()
+    if len(month) == 1:
+        month = '0' + month
+    return f'{year}-{month}-{day}'
+
+print(p.sub(date_transform, s))
+
+-------------- Chapter 8 ----------------
+
+l = [1, 2, 3, 4, 5]
+
+Поэлементный доступ:
+l[0]
+l[1] = 9
+
+Срезы:
+l[::-1]
+l[-1]
+l[:-1]
+l[1:]
+l[1:3]
+l[1:3] = [9, 99]
+
+Конкатенация:
+l + [7, 77, 777]
+
+Списки могут быть многомерными:
+l = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+l[1][2]  # 6
+
+Вхождение элемента в список:
+e in l # True или False
+
+Добавление элемента:
+l.append(e)
+
+l1 = [1, 2, 3]
+l2 = [4, 5]
+
+l1.extend(l2)
+print(l1)   # [1, 2, 3, 4, 5]
+
+l1.insert(<index>, <element>)    # добавление нового элемента в список по заданному индексу
+
+Поиск элемента в списке:
+e in l
+l.index(e)  # ValueError, если элемента e в списке нет
+l.count(e) - кол-во элементов e в списке
+
+Удаление элемента в списке:
+l.pop() - удаляет и возвращает последний элемента
+l.pop(idx) - удаляет и возвращает элемент по переданному индексу
+del l[idx] - удаляет элемент по переданному индексу
+l.remove(val) - удаляет элемент со значением val из списка (если таких несколько, то удаляется только один)
+
+Сортировка списка:
+l.sort() - сортировка inplace
+l.sort(reverse=True) - сортировка в обратном порядке
+l.sort(key=func) - сортировка по значению функции, пример:
+
+l = [-3, -2, -1, 0, 1, 2, 3]
+l.sort(key=lambda x: x ** 2)
+print(l)  # [0, -1, 1, -2, 2, -3, 3]
+
+sorted(l) - создает новый отсортированный список
+sorted(l, reverse=True)
+sorted(l, reverse=True, key=lambda x: ...)
+
+Преобразование списка в строку:
+<строка_разделитель>.join(<список>)
+
+-------------- Chapter 9 ----------------
+
+Кортежи - неизменяемый тип данных
+t = tuple(1, 2, 3, 4, 5)
+t[1] = 7 # Error!
+
+t[1]
+t[2:3]
+t[::-1]
+5 in t
+t * 2
+t + (6, 7, 8, 9)
+
+Методы кортежей:
+t.index(val)  # индекс элемента val, либо ValueError, если элемента нет
+t.count(val)  # кол-во элементов val в кортеже
+
+len(t) - длина кортежа (кол-во элементов)
+
+Утилиты модуля itertools:
+import itertools
+
+itertools.count([start=0], [step=1]) - создает бесконечную нарастающую последовательность
+
+for i in itertools.count():
+    print(i)
+    if i == 15:
+        break
+
+itertools.repeat(obj, n) - возвращает объект obj n раз
+list(zip(itertools.repeat('a'), 'abc'))  # [('a', 'a'), ('a', 'b'), ('a', 'c')]
+
+itertools.combinations(seq, n) - список из различных комбинаций элементов последовательности seq длины n
+itertools.combinations_with_replacement(seq, n) - список из различных комбинаций элементов последовательности seq с повторениями длины n
+itertools.permutations(seq, 2) - список переастановок элементов последовательности seq длины n
+
+itertools.cycle(iterbale) - возвращает по одному элементу последовательности, повторенной бесконечное число раз
+itertools.chain(*iterables) - возвращает по одному элементу первого итератора, затем второго и так далее
+itertools.dropwhile(func, iterable) - возвращает элементы iterable начиная с первого, для которого func вернет False
+
+-------------- Chapter 10 ---------------
+
+Словарь - пример не последовательности, а отображения. Доступ - по ключу, а не по индексу.
+
+Создание словарей:
+d = dict(name='Name', surname='Surname')
+d = dict({'name': 'Name', 'surname': 'Surname'})
+d = dict([('name', 'Name'), ('surname', 'Surname')])
+d = dict([['name', 'Name'], ['surname', 'Surname']])
+
+keys = ['name', 'surname']
+values = ['Name', 'Surname']
+kv = list(zip(keys, values))
+d = dict(kv)
+
+Правильное копирование (поверхностное и глубокое):
+d1 = d.copy()
+
+import copy
+d1 = copy.deepcopy(d)
+
+Доступ к элементам:
+d[key]   # Error, если ключа key в словаре нет
+d.get(key, default) - вернет default, если ключа в словаре нет
+
+key in d  # есть ли в словаре d ключ key
+
+Длина словаря:
+len(d)
+
+Добавление элемента:
+d[new_key] = value
+
+Обращение к элементу с default:
+d.setdefault(key, default) - если key есть в словаре, то возвращается d[key], если нет, то выполняется d[key] = default и возвращается default
+Пример:
+>>> d
+{'name': 'Anton'}
+>>> d.setdefault('lastname', 'default')
+'default'
+>>> d
+{'name': 'Anton', 'lastname': 'default'}
+>>> d.setdefault('name', 'default_name')
+'Anton'
+>>> d
+{'name': 'Anton', 'lastname': 'default'}
+
+Обвление словаря другим словарем:
+d.update(d1) - ключи из d1, которых нет в d добавляются в d со значениями из d1, а значения по общим ключам обновляются значениями из d1
+
+Удаление элемента:
+del d[key]
+d.pop(key)  # возвращает значение словаря по ключу и удаляет ключ и значение из словаря
+d.clear()   # полная очистка словаря
+
+Перебор элементов словаря:
+
+for key in d:
+    d[key]
+
+for key in d.keys():
+    d[key]
+
+for value in d.values():
+    value
+
+for key, value in d.items():
+    print(key, value)
+
+Множество - это неупорядоченный набор элементов
+s = set()
+s = set([1, 2, 3]) # {1, 2, 3}
+
+Проверка вхождения элемента во множество:
+e in s  # True или False
+
+Длина множества:
+len(s)
+
+Операции над множествами (ключи словаря - тоже множество):
+s1 | s2 - объединение
+s1 & s2 - пересечение
+s1 - s2 - разность
+s2 - s1 - разность
+s1 ^ s2 - симметрическая разность
+
+s1 == s2 - равенство
+s1 <= s2 - включение (все элементы s1 входят в s2)
+
+Методы множств:
+s.add(val) - добавление элемента
+s.remove(val) - удаляет элемент, либо ошибка, если элемента нет
+s.discard(val) - удаляет элемент, нет ошибки, если элемента нет
+s.pop() - удаляет произвольный элемент и возвращает его
+s.clear() - очищает множество
 
