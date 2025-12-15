@@ -15,7 +15,7 @@ chmod +x file.py
 ./file.py
 
 ";" в конце инструкций не обязательно - по умолчанию конец строки
-НО если несколько инструкций в строке - тогда обязатнльно
+НО если несколько инструкций в строке - тогда обязательно
 a = 3; b = 5; c = a + b;
 print(c) 
 
@@ -43,7 +43,7 @@ print([Объекты], sep=' ', end='\n', file=sys.stdout)
 
 Не очень красивый способ вывести данные:
 import sys
-sys.stdout.write('Текст')
+sys.stdout.write('Текст\n')
 
 Простейшая обработка ошибок:
 try:
@@ -259,7 +259,7 @@ abs
 bin
 oct
 hex
-divmod(a, b)   -> возвращает кортеж (a //b, a % b)
+divmod(a, b)   -> возвращает кортеж (a // b, a % b)
 round
 pow
 max(<iterable>)
@@ -273,7 +273,7 @@ round(1.28, 1)   # 1.3
 Форматирование:
 x = 1.234567
 format(x, '0.2f')  # 1.23
-format(x, '{><^}10,.1f)
+format(x, '*{><^}10,.1f)
 
 Математические функции:
 import math
@@ -299,7 +299,7 @@ import random
 
 random.random() - случайное вещественное число от 0 до 1
 random.uniform(a, b) - случайное вещественное число от a до b
-random.randrange(start, end, step)
+random.randrange(start, end, step) - случайное число из последовательности range(start, end, step)
 random.randint(start, end) - случайное целое число от start до end
 random.choice(<sequence>) - случайный выбор элемента последовательности
 random.sample(<sequence>, n) - выбор n элементов последовательности
@@ -537,6 +537,7 @@ t * 2
 t + (6, 7, 8, 9)
 
 Методы кортежей:
+val in t
 t.index(val)  # индекс элемента val, либо ValueError, если элемента нет
 t.count(val)  # кол-во элементов val в кортеже
 
@@ -658,4 +659,411 @@ s.remove(val) - удаляет элемент, либо ошибка, если �
 s.discard(val) - удаляет элемент, нет ошибки, если элемента нет
 s.pop() - удаляет произвольный элемент и возвращает его
 s.clear() - очищает множество
+
+-------------- Chapter 11 ---------------
+
+def func_name(parameters):
+    <do smth>
+    [return smth]
+
+Параметры могут быть позиционными и именными. Часть параметров может быть необязательными, так как содержат значение по умолчанию.
+
+def sum(x, y)
+def sum(x, y=2)
+def sum(x=1, y=2)
+
+Переменное число позиционных аргументов:
+def sum(*args)
+# args - котреж
+
+Переменное число позиционных и именованных аргументов:
+def sum(*args, **kwargs)
+# args - кортеж
+# kwargs - словарь
+
+l = [1, 2, 3]
+d = {'a':1, 'b':2, 'c':3}
+
+Вызов функции: ыгь(*l, **d) - правильная распаковка параметров, собранныъ в структуры
+
+Анонимные функции:
+f = lambda x, y: x + y
+
+Функции генераторы:
+обладают ключевым словом yield - отдают значение и запоминают свое состояние
+После того, как сработал последний блок кода в функции - StopIteration
+
+def my_gen():
+    yield 1
+
+g = my_gen()
+next(g)
+
+def fib_gen(lim=10):
+    i = 0
+    a, b = 0, 1
+    while i <= lim:
+        if i == 0:
+            yield a
+        elif i == 1:
+            yield b
+        else:
+            b, a = a + b, b
+            yield b
+        i += 1
+
+Декораторы:
+
+# Декораторы: https://habr.com/ru/companies/otus/articles/727590/?ysclid=mfb36fz9z7248358949
+# В общих чертах декоратор — это вызываемый объект, который принимает на вход вызываемый объект и возвращает другой вызываемый объект.
+
+Простейший декоратор:
+
+def null_decorator(func):
+    return func
+
+@null_decorator
+def my_func():
+    <do smth>
+
+Более общий случай:
+
+import functools
+
+def trace(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f'Call: {func.__name__} function with arguments: {args}, {kwargs} ')
+        return func(*args, **kwargs)
+    return wrapper
+
+def add_something(addition):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, ** kwargs):
+            return '<' + addition + '>' + str(func(*args, **kwargs)) + '</' + addition + '>'
+        return wrapper
+    return decorator
+
+-------------- Chapter 12 ---------------
+
+import time
+import datetime
+
+Текущая дата и время:
+time.time()
+time.gmtime(time.time())       # структура
+time.localetime(time.time())   # структура
+
+Форматирование вывода:
+time.strftime(format, struct_time=now)
+
+print(time.strftime('%d.%m.%Y'))
+print(time.strftime('%H:%M:%S'))
+print(time.strftime('%d.%m.%Y %H:%M:%S'))
+
+Парсинг текстового представления даты и времени (с заданным форматом):
+time.strptime(input_str, format)
+print(time.strptime('2025-09-09 15:07:53', '%Y-%m-%d %H:%M:%S'))
+
+Заснуть на заданное кол-во секунд:
+time.sleep(n_seconds)
+
+a = datetime.datetime(2025, 9, 9)
+a + datetime.timedelta(days=15)
+
+Форматированный вывод:
+a.isoformat()
+a.strftime('%d.%m.%Y')
+
+Работа с календарем:
+import calendar
+
+c = calendar.TextCalendar(0)
+print(c.formatyear(2025))
+print()
+print(c.formatmonth(2025, 9))
+print()
+
+-------------- Chapter 13 ---------------
+
+if __name__ == '__main__':
+    <do smth>
+
+Основные схемы разбиения кода на модули:
+
+1. Пользователь импортируем каждый подмодуль
+project
+    |_modules
+        |_ __init__.py (пустой)
+        |_ a.py
+        |_ b.py
+    |_ main.py:
+        import modules.a
+        import modules.b
+
+        modules.a.func()
+        modules.b.func()
+
+2. Пользователь импортирует головной модуль
+project
+    |_modules
+        |_ __init__.py:
+            from . import a
+            from . import b
+
+        |_ a.py
+        |_ b.py
+    |_ main.py:
+        import modules
+
+        modules.a.func()
+        modules.b.func()
+
+-------------- Chapter 14 ---------------
+
+Схема перехвата ошибок:
+
+try:
+    <do smth>
+except:
+    <do smth else>
+
+try:
+    <do smth>
+except ValueError as e:
+    print('my_text')
+    print(e)
+except ZeroDivisionError as e:
+    print('my_text')
+    print(e)
+
+try:
+    ...
+except:
+    ...
+else:
+    ...     # код, который будет выполнен, если исключения не возникло
+finally:
+    ...     # код, который будет выполнен в любом случае
+
+Работа с контекстом with ... as:
+Протокол менеджера контекста гарантирует, что будут выполнены завершающие действия вне зависимости от того, произошло ли в блоке кода исключение или нет
+
+with <выражение> as <переменная>, <выражение 2> as <переменная 2>, ... :
+    <do smth>
+
+Объекты должны поддерживать метод __enter__ и метод __exit__
+
+Генерирование исключений:
+raise ValueError('My text')
+raise TypeError('My text')
+
+try:
+    x += 10
+    assert x < 20, 'Error!'
+except AssertionError as e:
+    print(e)
+
+Создание пользовательских исключений:
+наследование от Exception
+
+class MyCustomError(Exception):
+    pass
+# можно настроить __init__, чтобы более сложно получать текстовое описание ошибки и т.д.
+
+-------------- Chapter 15 ---------------
+
+Открытие файла:
+
+with open(file_path, {'r', 'w', 'a'}) as f:
+    for line in f:
+        print(line.strip())
+        
+Пример записи в файл:
+f = open(file_path, 'w', encoding='utf-8')
+f.writelines(['String1\n', 'String2\n'])
+f.flush()
+f.close()
+
+Работа с CSV (чтение):
+
+import csv
+
+with open(file_path, 'r') as f:
+    f_csv = csv.reader(f)
+    headers = next(f_csv)
+    for row in f_csv:
+        ...   # row - кортеж
+
+import collections
+
+with open(file_path, 'r') as f:
+    f_csv = csv.reader(f, delimiter='\t')
+    headers = next(f_csv)
+    Row = collections.namedtuple('Row', headers)
+    for r in f_csv:
+        row = Row(*r)
+        ...
+
+Работа с CSV (запись):
+
+import csv
+
+headers = ['UserID', 'FirstName', 'LastName']
+users = [('user1', 'Anton', 'Belikov'), ('user2', 'Luda', 'Artemieva')]
+
+with open('users.csv', 'w') as f:
+    f_csv = csv.writer(f)
+    f_csv.writerow(headers)
+    f_csv.writerows(users)
+
+Работа с JSON (чтение):
+
+import json
+
+with open(file_path, 'r') as f:
+    data = json.load(f)
+
+Работа с JSON (запись):
+
+import json
+
+with open(file_path, 'w') as f:
+    json.dump(data, f)
+
+Конвертация данных в JSON и обратно:
+data = {'a': 1, 'b': 2, 'c': 3}
+json_data = json.dumps(data)
+data = json.loads(json_data)
+
+-------------- Chapter 16 ---------------
+
+Три постулата ООП: наследование, инкапсуляция и полиморфизм
+
+Определение класса:
+
+class SampleClass:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+Наследование:
+class ChildSampleClass(SampleClass):
+    def __init__(self, a, b, c):
+        super().__init__(a, b)
+        self.c = c
+
+Определение статического метода:
+
+class StaticSample:
+    @staticmethod
+    def ssum(x, y):
+        return x + y
+    def msum(self, x, y):
+        return x + y
+
+Определение абстрактного метода:
+
+import abc
+
+class Sample:
+    @abc.abstractmethod
+    def f(self):
+        raise NotImplementedError('Not implemented!')
+
+
+Свойство Property у класса:
+
+class ClassWithProperty:
+    def __init__(self, a):
+        self.a = a
+    def get_a(self):
+        return self.a
+    def set_a(self, a):
+        self.a = a
+    def del_a(self):
+        del self.a
+    length = property(get_a, set_a, del_a, "Length")
+
+Полезные методы для проверки атрибутов класса:
+hasattr(obj, name)
+getattr(obj, name)
+setattr(obj, name, value)
+delattr(obj, name)
+
+-------------- Chapter 18 ---------------
+
+Итератор должен реализовывать методы __iter__ и __next__. StopIteration - это сигнал о том, что элементы кончились.
+
+Примеры:
+it = iter([1, 2, 3])
+
+while True:
+    try:
+        i = next(it)
+        print(i)
+    except StopIteration:
+        print('Stoped! No other elements in sequence!')
+        break
+
+it = [1, 2, 3].__iter__()
+
+while True:
+    try:
+        i = it.__next__()
+        print(i)
+    except StopIteration:
+        print('Stoped! No other elements in sequence!')
+        break
+
+Делегирование итерации:
+class MyContainer:
+    def __init__(self, val=0, seq=[1, 2, 3]):
+        self.val = val
+        self.seq = seq
+    def __iter__(self):
+        return iter(self.seq)  # делегируем "родному" методу iter класса последовательности
+
+Также можно использовать функцию-генератор для итерации по ее результатам:
+
+Пример:
+def my_range(start=0, stop=10, inc=0.5):
+    cur = start
+    while cur <= stop:
+        yield cur
+        cur += inc
+
+Реализация протокола итератора:
+
+class IterCLass:
+    def __init__(self, seq=[1, 2, 3]):
+        self.idx = 0
+        self.seq = seq
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.idx < len(self.seq):
+            self.idx += 1
+            return self.seq[self.idx - 1]
+        else:
+            self.idx = 0
+            raise StopIteration
+
+Пример с функциями-генераторами для __iter__ и __reversed__:
+
+class Countdown:
+    def __init__(self, start):
+        self.start = start
+    def __iter__(self):
+        n = self.start
+        while n > 0:
+            yield n
+            n -= 1
+    def __reversed__(self):
+        n = 1
+        while n <= self.start:
+            yield n
+            n += 1
+
 
