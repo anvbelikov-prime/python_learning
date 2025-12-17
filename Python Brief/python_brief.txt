@@ -684,7 +684,7 @@ def sum(*args, **kwargs)
 l = [1, 2, 3]
 d = {'a':1, 'b':2, 'c':3}
 
-Вызов функции: ыгь(*l, **d) - правильная распаковка параметров, собранныъ в структуры
+Вызов функции: sum(*l, **d) - правильная распаковка параметров, собранных в структуры
 
 Анонимные функции:
 f = lambda x, y: x + y
@@ -795,9 +795,10 @@ if __name__ == '__main__':
 1. Пользователь импортируем каждый подмодуль
 project
     |_modules
-        |_ __init__.py (пустой)
+        |_ __init__.py (пустой) Можно даже обойтись без него!
         |_ a.py
         |_ b.py
+    
     |_ main.py:
         import modules.a
         import modules.b
@@ -814,6 +815,7 @@ project
 
         |_ a.py
         |_ b.py
+    
     |_ main.py:
         import modules
 
@@ -1066,4 +1068,105 @@ class Countdown:
             yield n
             n += 1
 
+Правильная практика: в методе __iter__ настраиваются первоначальные настройки для итерации (например, self.count = 0 / self.idx = 0 и т.д.), а в методе __next__ возвращается новый элемент и генерируется исключение StopIteration.
+Для реализации __reversed__ лучше использовать втроенный в класс подкласс со своими специфичными настройками, определяемыми в методе __iter__ и генерации элементов в __next__.
 
+def __reversed__(self):
+    self.count = 0
+    return self.ReversedSubClass(self.start, self.count, self.length, self.months_names)
+
+
+-------------- Collections ---------------
+
+import collections
+
+Словарь со значениями по умолчанию defaultdict.
+defaultdict — это «словарь с дефолтом»: он автоматически создает значение для отсутствующего ключа по заданной фабрике вместо выбрасывания KeyError
+
+import collections
+
+d = collections.defaultdict(int)
+
+for c in 'aaabbaabc':
+    d[c] += 1
+
+print(d)  # defaultdict(<class 'int'>, {'a': 5, 'b': 3, 'c': 1})
+
+Счетчик Counter.
+Ключами являются хешируемые объекты, а значениями — их счётчики (целые числа, могут быть нулевыми или отрицательными). По сути это реализация мультимножества: элемент может встречаться несколько раз, а количество хранится как значение.
+
+import collections
+
+s = 'aaabbbcccdd'
+c = collections.Counter(s)
+print(c)                # Counter({'a': 3, 'b': 3, 'c': 3, 'd': 2})
+print(c.most_common())  # [('a', 3), ('b', 3), ('c', 3), ('d', 2)]
+print(c.most_common(1)) # [('a', 3)]
+print(c.most_common(2)) # [('a', 3), ('b', 3)]
+
+print(list(map(lambda x: x[0], filter(lambda x: x[1] == max(c.values()), c.most_common())))) # ['a', 'b', 'c']
+
+Именованный кортеж namedtuple.
+namedtuple возвращает новый класс, наследующий tuple, с фиксированным набором полей и доступом к ним как по индексу, так и по имени. По сути это компактная структурка данных «как tuple, но с атрибутами», без методов и логики.
+
+import collections
+
+field_names = ['x', 'y']
+
+Point = collections.namedtuple('Point', field_names)
+p = Point(5, 7)
+
+print(p.x, p.y, p[0], p[1])   # 5 7 5 7
+
+
+-------------- Полезные мелочи ---------------
+
+enumerate(<iterable>, start_pos) - нумерует элементы последовательности
+
+for index, value in enumerate('abc'):
+    print(f'{index}: {value}')
+
+reversed(<iterable>) - создает итератор с элементами последовательности в обратном порядке
+
+Модуль для взаимодействия с ОС:
+
+import os
+
+os.stat(file_path) - извлечь информацию о файле
+os.listdir(path) - список объектов в директории
+os.path.join(path1, path2, ...)
+os.path.sep
+
+
+Модуль operator:
+
+import operator
+
+operator.add        # +
+operator.sub        # -
+operator.mul        # *
+operator.truediv    # /
+operator.pow        # **
+...
+
+Модуль string:
+
+import string
+
+string.ascii_lowercase
+string.ascii_uppercase
+string.ascii_letters
+string.digits
+string.punctuation
+string.whitespace
+
+Генераторы списков/словарей/множеств:
+
+[x * x for x in range(5) if x % 2 == 0]
+[(x, y) for x in range(5) if x % 2 == 0 for y in range(5) if y % 2 != 0]
+
+{x: func(x) for x in range(5)}  # словарь
+
+{x for x in range(5)}  # множество
+
+(x for x in range(5)) - возвращает генератор (ленивый, экономия памяти и ресурсов)
