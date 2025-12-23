@@ -969,7 +969,7 @@ class StaticSample:
 
 import abc
 
-class Sample:
+class Sample(abc.ABC):
     @abc.abstractmethod
     def f(self):
         raise NotImplementedError('Not implemented!')
