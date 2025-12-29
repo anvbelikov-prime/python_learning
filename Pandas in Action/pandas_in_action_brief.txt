@@ -10,7 +10,8 @@ import seaborn as sns
 s = pd.Series(
     data,
     index,
-    dtype
+    dtype,
+    name
 )
 
 np.nan
@@ -135,7 +136,15 @@ pd.cut(
 
 ### Преобразование значений
 
+#### Без доп. параметров
 s.apply(func)
+
+#### С доп. параметрами
+def my_func(val, par1, par2):
+    ...
+    return ...
+
+s.apply(func=my_func, par1='a', par2=77)   # вместо первого параметра val будет подставлено значение из Series
 
 ### Наполнение Series рандомными данными
 
@@ -356,11 +365,11 @@ df['column_name'] = df['column_name'].astype('category')   # для столбц
 
 df['column_name'] == expr (!=, <, <=, >, =>)
 
-df['column_name'].isin(exprt_list)
+df['column_name'].isin(expr_list)
 
 df['column_name'].between(
     left,       # левая граница
-    righ,       # правая граница
+    right,       # правая граница
     inclusive   # both, neither, left, right - варианты включения/исключения границ
 )
 
@@ -447,7 +456,7 @@ s.str.len()
 s.str.split(
     pat,     # шаблон разделителя
     n,       # кол-во разбиений (если n == 1, то элементов будет 2)
-    expand   # если указано как True, то каждый элемент разбиения будет в отдельном столбце, а на выходе будет DataFrame
+    expand   # bool, если указано как True, то каждый элемент разбиения будет в отдельном столбце, а на выходе будет DataFrame
 )
 
 s.str.get(
