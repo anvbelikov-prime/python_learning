@@ -1,7 +1,7 @@
 -------------- Chapter 1 ----------------
 Пример программы:
 # Comment
-print('Hello, world!)
+print('Hello, world!')
 
 Кодировка:
 # -*- coding: utf-8 -*-
