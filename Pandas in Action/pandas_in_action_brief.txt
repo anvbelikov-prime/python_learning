@@ -341,6 +341,7 @@ df.drop(
 ### Замена индекса
 
 df.reset_index().set_index(keys=...)  # перед новым set_index нужно обязательно сделать reset_index(), иначе старый индекс потеряется полностью
+df.reindex(new_index)
 
 ### Вывод общей информации о DataFrame
 
@@ -562,7 +563,7 @@ df.pivot_table(
     index=['..', '..', '..'],    # столбцы для строк сводной
     columns=['..', '..', '..'],  # столбцы для столбцов сводной
     values=['..', '..', '..'],   # колонки для агшрегирования (значения) сводной
-    aggufunc=['..', '..', '..'] / {'value_column1':'func1', 'value_column2':'func12', ...},  # список или словарь агрегирующих функций
+    aggfunc=['..', '..', '..'], / {'value_column1':'func1', 'value_column2':'func12', ...},  # список или словарь агрегирующих функций
     fill_value = 0.0,            # чем заполнить np.nan
     margins=True,                # выводить ли промежуточные итоги
     margins_name='Total',        # чем заменить название 'All' в итогах
@@ -709,8 +710,8 @@ df['ts_column'].dt.is_quarter_end
 
 ## Группировка в случае datetime индекса
 
-df.resample('QE')[col_name].mean()
-df.resample('1D')['col_name].sum()
+df.resample('QE')['col_name'].mean()
+df.resample('1D')['col_name'].sum()
 
 ## Интервалы времени
 
